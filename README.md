@@ -40,3 +40,18 @@ And they are...
 	- The blue transparent lines indicate the position of the line when in training.
 	- The red opaque line indicate the final line created after completion of iterations
 	- More images in images/ folder.
++ src/03_perceptron.py : It's a freaking perceptron based classifier !! (Kyaaah!!! XD)
+	- We made a red ball black ball classifier using a perceptron.
+	- A perceptron is basically an Aritficial Neural Network with one neuron.
+	- What you think it's simple,so it is not important?
+		- My silly friend. This is the powerhouse that can be scaled up to tremendous levels.
+	- Any thing above the blue line is supposed to be red(+1) and all that is below is to be black(-1)
+	- We train our perceptron on 100x8 , 100x10 and 100x30 data points using supervised learning.
+	- The training essentialy modifies the weights of the perceptron.
+	- Then we call it to guess and classify the data points and we plot it
+	- RESULTS for 100*8 data points </br> ![perceptron-1](images/03_perceptron_01_100x8_nodes.JPG)
+	- It can be seen the classification failed miserably! It is because, we did not have enough data points.
+	- RESULTS for 100*10 data points </br> ![perceptron-2](images/03_perceptron_02_100x10_nodes.JPG)
+	- We can see the results improved , but still some balls are not classified correctly
+	- RESULTS for 100*30 data points </br> ![perceptron-3](images/03_perceptron_03_100x30_nodes.JPG)
+	- The final one is just pure bliss !! Waaaaaah !!! XD

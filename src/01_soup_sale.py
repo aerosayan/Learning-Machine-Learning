@@ -1,3 +1,4 @@
+# LANG : Python 2.7
 # FILE : 01_soup_sale.py
 # AUTH : Sayan Bhattacharjee
 # EMAIL: aero.sayan@gmail.com

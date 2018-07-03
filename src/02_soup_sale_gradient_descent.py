@@ -1,3 +1,4 @@
+# LANG : Python 2.7
 # FILE : 01_soup_sale_gradient_descent.py
 # AUTH : Sayan Bhattacharjee
 # EMAIL: aero.sayan@gmail.com
@@ -22,8 +23,8 @@ def compute_error(_m,_b,_x,_y):
 
 def run_gradient_descent(_x,_y,_m,_b,_rate,_num_it):
     # Do gradient descent
-    m = 0
-    b = 0
+    m = _m
+    b = _b
     for i in range(_num_it):
         m,b = gradient_descent_step(m,b,_x,_y,_rate)
         if(i%(_num_it / 8)==0):
@@ -45,10 +46,10 @@ def gradient_descent_step(_m,_b,_x,_y,_rate):
     for i in range(n):
         guess = (_m*_x[i] + _b)
         error = _y[i] - guess
-        sum_m += -1 * (error)*_x[i]
-        sum_b += -1 * (error)
-    m_grad = (2/float(n))*sum_m
-    b_grad = (2/float(n))*sum_b
+        sum_m += -1 * (error)*_x[i]                # -1 meaning error = - error
+        sum_b += -1 * (error)                      # -1 meaning error = - error
+    m_grad = (2/float(n))*sum_m                    # partial derivate wrt m
+    b_grad = (2/float(n))*sum_b                    # partial derivative wrt b
 
     m_new = _m - (_rate*m_grad)
     b_new = _b - (_rate*b_grad)
@@ -67,7 +68,7 @@ if __name__ == "__main__":
     y = soup                                                 # y co-ordinate
 
     init_m = 0                                               # slope guess
-    init_b= 0                                                # intercept guess
+    init_b = 0                                               # intercept guess
     init_err = compute_error(init_m,init_b,x,y)              # initial error
     rate = 0.0005                                            # learning rate
 
