@@ -1,8 +1,8 @@
 # LANG : Python 2.7
-# FILE : 01_perceptron.py
+# FILE : 03_perceptron.py
 # AUTH : Sayan Bhattacharjee
 # EMAIL: aero.sayan@gmail.com
-# DATE : 3/JULY/2018 MON
+# DATE : 3/JULY/2018 
 # INFO : Perceptron- the most simplest neural network. $#*& just  got serious.
 #      : Here, we do classification with gradient descent
 import numpy as np
@@ -99,6 +99,11 @@ if __name__ == "__main__":
 
     print("final weights :",p.weights)
     print("final error :",p.calc_error(x,y,labels))
+
+    # the x co-ordinates
+    x = np.random.uniform(low=0,high=1,size=(n))
+    # the y co-ordinates
+    y = np.random.uniform(low=0,high=1,size=(n))
 
     # Plot the final results
     plt.scatter(0,0)

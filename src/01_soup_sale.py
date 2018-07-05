@@ -2,7 +2,7 @@
 # FILE : 01_soup_sale.py
 # AUTH : Sayan Bhattacharjee
 # EMAIL: aero.sayan@gmail.com
-# DATE : 2/JULY/2018 MON
+# DATE : 2/JULY/2018
 # INFO : How does hot soup sale change in winter based on temperature?
 #      : Here, we do linear regression with ordinary least squares
 

@@ -55,3 +55,17 @@ And they are...
 	- We can see the results improved , but still some balls are not classified correctly
 	- RESULTS for 100*30 data points </br> ![perceptron-3](images/03_perceptron_03_100x30_nodes.JPG)
 	- The final one is just pure bliss !! Waaaaaah !!! XD
++ src/04_perceptron_biased.py : It's again a single layer perceptron but now with activation bias. WOW!
+	- We improved the previous red ball black ball classifier using activation bias.
+	- Overhauled all the linear algebra to pure numpy operations instead of loops resulting in 6x speed up.
+	- Oh yeah! Added a linear function creator to allow changing our dividing blue line.
+	- Trained on 1000 data points for 500,1000 and 5000 epochs.
+	- Then created random validation data for classification and plotted the results of the classification.
+	- RESULTS for 500 epochs </br> ![04_01](images/04_perceptron_biased_01_1000_nodes_500_epoch.JPG)
+	- We can see the results are horrible meaning the perceptron needs more training.
+	- RESULTS for 1000 epochs </br> ![04_02](images/04_perceptron_biased_02_1000_nodes_1000_epoch.JPG)
+	- We can see the results improved but still some error is present around the dividing line.
+	- RESULTS for 5000 epochs </br> ![04_03](images/04_perceptron_biased_03_1000_nodes_5000_epoch.JPG)
+	- The results are amazing!
+	- RESULTS for a different linear dividing line after 5000 epochs</br> ![04_04](images/04_perceptron_biased_04_1000_nodes_5000_epoch.JPG)
+	- This is cool! Do not try to deny it.
