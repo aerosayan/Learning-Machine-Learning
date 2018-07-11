@@ -61,24 +61,24 @@ class Perceptron:
         if(_verbose): print("DBG : activation_output : guess :"); print(activation_output);
         return  activation_output
 
-    def train(self,_learning_rate,_epoch = 1,_echo = False,_verbose = False):
-        print("INF : Total epoch : "+ str(_epoch))
+    def train(self,_learning_rate,_epochs = 1,_echo = False,_verbose = False):
+        print("INF : Total epoch : "+ str(_epochs))
 
         # Create temp variable for weights
         weights = self.w
 
         # Train for a set number of epochs
-        for i in range(_epoch):
+        for i in range(_epochs):
             # Number of data points
             N = float(len(self.x))
             # Guess output and classify using the activation function
             guess = self.guess(_echo=_echo,_verbose=_verbose)
             # Calculate error from suprevised learning datasetknown results
-            error =  self.y - guess
+            error =  guess - self.y
 
             # Update weights using gradient descent
             for k in range(len(weights)): # TODO : bias column handling
-                weights[k] +=  2.0/N* (np.dot(self.x[:,k] , np.transpose(error)) * _learning_rate)
+                weights[k] +=  -2.0/N* (np.dot(self.x[:,k] , np.transpose(error)) * _learning_rate)
             self.w = weights
             # end for
         # end for
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     # Create training dataset
     #----------------------------------------------------------
     # Number of datasets
-    n = 100*10
+    n = 2*50
     # Range of x and y co-ordinates
     xmin = -1.0;xmax = 1.0;ymin = -1.0;ymax = 1.0;
     # Create x, y co-ordinates and labels for supervised learning
@@ -115,14 +115,14 @@ if __name__ == "__main__":
     p.b = 1
 
     print("INF : TRAINING INITIAL ERROR : %2.5f " % p.calc_err())
-    p.train(_learning_rate = 0.001,_epoch = 5000,_echo = True)
+    p.train(_learning_rate = 0.001,_epochs = 2000,_echo = True)
     print("INF : TRAINING FINAL ERROR   : %2.5f " % p.calc_err())
 
     #----------------------------------------------------------
     # Validate the model with new data to prevent overfitting
     #----------------------------------------------------------
     # The size modifier
-    m = 2
+    m = 1
     # the x and  y co-ordinates
     x = np.random.uniform(low=xmin,high=xmax,size=(n/m))
     y = np.random.uniform(low=ymin,high=ymax,size=(n/m))
