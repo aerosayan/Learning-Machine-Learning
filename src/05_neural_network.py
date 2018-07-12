@@ -52,14 +52,14 @@ class Layer:
         """ Initialize weight matrix """
         nl = self.nl
         nlminus1 = self.nlminus1
-        self.w = np.matrix(np.random.uniform(low=-1,\
+        self.w = np.matrix(np.random.uniform(low=-1*0,\
         high=+1,size=nl*nlminus1).reshape(nl,nlminus1))
 
     def init_b(self):
         """ Initialize bias vector """
         nl = self.nl
         nlminus1 = self.nlminus1
-        self.b = np.matrix(np.random.uniform(low=-1,\
+        self.b = np.matrix(np.random.uniform(low=-1*0,\
         high=+1,size=nl).reshape(nl,1))
 
     def weighted_sum(self,_a_lminus):
@@ -93,14 +93,14 @@ class Layer:
         @ param : _y : Labeled desired data
         """
         self.delta = np.matrix( np.multiply\
-        (self.a - _y,self.relu_p(self.z)) )
+        (self.a - _y, self.relu_p(self.z)) )
 
-    def calc_delta(self,_del_lplus):
+    def calc_delta(self,_w_lplus,_del_lplus):
         """ Calculate general purpose delta for the internal layers.
         @ param : _del_lplus : the delta vector of the next layer
         """
         self.delta = np.matrix(np.multiply( \
-        np.dot(self.w.T,_del_lplus), self.relu_p(self.z)) )
+        np.dot(_w_lplus.T,_del_lplus), self.relu_p(self.z)) )
 
     def calc_bias_grad(self):
         """ Calculate the gradient(derivative) of cost wrt bias """
@@ -114,7 +114,7 @@ class Layer:
 
 class NeuralNetwork:
     """ Multi layer neural network """
-    def __init__(self,_x,_y,_nhnodes,_nhlayers = 1):
+    def __init__(self,_x,_y,_nhnodes,_xmax=1,_ymax=1,_nhlayers = 1):
         """ Constructor for the neural network class
         @param _x : input in np.matrix row vector format
         @param _y : output target in np.matrix row vector format
@@ -138,14 +138,23 @@ class NeuralNetwork:
         #     |x12 x22
         #     |x13 x23
         #         ^_(COLUMN VECTORS) data points in each study
-        self.x = np.matrix(_x)
+        if _xmax == 1:
+            self.xmax = np.max(_x)
+        else:
+            self.xmax = _xmax
+        self.x = np.matrix(_x) / float(self.xmax)
 
         # Target data stored in column vector form
         # y = |y11 y21   <- (COLUMNS) Multiple study cases
         #     |y12 y22
         #     |y13 y23
         #         ^_(COLUMN VECTORS) data points in each study
-        self.y = np.matrix(_y)
+        if _ymax == 1:
+            self.ymax = np.max(_y)
+        else:
+            self.ymax = _ymax
+        self.y = np.matrix(_y) / float(self.ymax)
+
         # The number of test cases and data points
         self.n_cases = self.x.shape[1]
         # The number nodes in input
@@ -196,13 +205,13 @@ class NeuralNetwork:
         print(self.layers[-1].w)
         print(self.layers)
 
-    def train(self,_epochs = 1):
+    def train(self,_epochs = 1,_echo = False):
         """ Train the neural network """
-        for epoch in range(_epochs):  # iterate through epochs
-            for case in range(self.x.shape[1]): # iterate through all the cases
-                print("DBG : Performing one forward propagation loop...")
+        for epoch in xrange(_epochs):  # iterate through epochs
+            for case in xrange(self.x.shape[1]): # iterate through all the cases
+                if _echo:print("DBG : Performing one forward propagation loop...")
                 self.forward_propagation(case)
-                print("DBG : Performing one back propagation loop...")
+                if _echo:print("DBG : Performing one back propagation loop...")
                 self.back_propagation(case)
 
     def forward_propagation(self,_case,_verbose = False):
@@ -239,16 +248,15 @@ class NeuralNetwork:
             if(j>0):
                 a = self.layers[j-1].a    # activation of previous hidden layers
 
-
             # Calculate the delta values
             if(j == L): # if the last value
                 layer.calc_delta_last(y) #ERROR  y size does not match a
             elif(j < L ): # All other layers before the last layer
-                layer.calc_delta(self.layers[j+1].delta)
+                layer.calc_delta(self.layers[j+1].w,self.layers[j+1].delta)
 
             # Calculate the necessary gradients
             if(j == 0 ): # If we are at the front of the hidden layer
-                layer.calc_weight_grad(self.x[:,case])
+                layer.calc_weight_grad(self.x[:,_case])
             elif(j>0): # else if we are above j = 0
                 layer.calc_weight_grad(a)
 
@@ -258,16 +266,61 @@ class NeuralNetwork:
             layer.w += -layer.grad_w *learning_rate
             layer.b += -layer.grad_b *learning_rate
 
+    def guess(self,_x):
+        """ Pass the input through the neural network to get the result
+        @param _x : input np.matrix with separate test cases in unique columns
+        """
+        guess = np.array([])
+        for case in xrange(_x.shape[1]): # iterate through all input cases
+            a = np.matrix(_x[:,case])    # activation of previous layer
+            for j in xrange(len(self.layers)): # iterate through layers
+                layer = self.layers[j]
+                a     = layer.relu(layer.weighted_sum(a))
+            guess = np.append(guess,a)
+        return guess
+
+
+
+    def calc_error(self,_x,_y,_xmax=1,_ymax=1,_echo=True):
+        """ Calculate the error of the neural network
+        @param _x : input np.matrix with separate test cases in unique columns
+        @param _y : output target with separate test cases in unique columns
+        """
+        if( _x.shape[1] != _y.shape[1] ):
+            print("ERR : Error can not be calculated...")
+            print("ERR : _x and _y should have same number of cases...")
+            assert(False)
+        if(_xmax == 1):
+            xmax = np.max(_x)
+        else:
+            xmax = _xmax
+        _x = _x / float(xmax)
+        if(_ymax == 1):
+            ymax = np.max(_y)
+        else:
+            ymax = _ymax
+        _y = _y / float(ymax)
+        guess = self.guess(_x)
+        if _echo : print("DBG : guess  : ",guess*ymax)
+        if _echo : print("DBG : target : ",_y*ymax)
+        error = 1.0/float(_x.shape[1]) * np.sum(np.square((guess - _y )) )
+        if _echo : print("INF : TOTAL ERROR : ",error)
+        return error
+
 
 
 
 
 if __name__ == "__main__":
-    x = np.matrix([[7,5,2],[6,7,8]])
-    y = np.matrix([[99,60,35]])
+    x = np.matrix([[7,5,2],[6,7,8]],dtype=float)
+    y = np.matrix([[99,60,35]],dtype=float)
+
     print(x.shape)
     print(y.shape)
-    nn = NeuralNetwork(x,y,3,_nhlayers=4)
+    nn = NeuralNetwork(x,y,8,_ymax=100,_nhlayers=2)
     nn.print_all(_verbose=True)
     nn.create_layers()
-    nn.train()
+    nn.calc_error(x,y,_ymax = 100)
+    nn.train(_epochs=10000)
+    nn.calc_error(x,y)
+    # IS IT CORRECT TO SCALE THE DATA DOWN ?
