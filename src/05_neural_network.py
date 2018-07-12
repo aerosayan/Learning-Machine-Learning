@@ -3,14 +3,18 @@
 # AUTH : Sayan Bhattacharjee
 # EMAIL: aero.sayan@gmail.com
 # DATE : 6/JULY/2018             (Started Creation  )
-# DATE : 11/JULY/2018            (Finished Creation )
-# DATE : 11/JULY/2018            (Last Modified     )
+# DATE : 12/JULY/2018            (Finished Creation )
+# DATE : 12/JULY/2018            (Last Modified     )
 # INFO : Neural network - A multi-level fully connected neural network.
 #      : A multi-level neural network with feed forward architechture and
 #      : backpropagation learning system.
+# USE  : The neural network is used to predict what will be the result of a
+#      : student based on how many hours he has studied and slept respectively
+#      : in the previous night.
 from __future__ import print_function
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 class Layer:
     """ Neural network layer
@@ -33,6 +37,8 @@ class Layer:
         self.z = []
         # The activation vector of the layer
         self.a = []
+        # ReLU leak
+        self.relu_leak = 0.001
 
         # -----------------------------------------------------
         # Gradients of the cost with respect to bias and weight
@@ -76,7 +82,7 @@ class Layer:
         # Create and assign space for activation
         a = _z.copy()
         # Apply vectorized form of ReLU = max(0,z)
-        a[_z <= 0 ] = 0
+        a[a <= 0] = 0
         return np.matrix(a)
 
     def relu_p(self,_z):
@@ -172,47 +178,56 @@ class NeuralNetwork:
         # The objects of the layer class
         self.layers = np.array([])
 
-    def print_all(self,_verbose=False):
+    def print_info(self,_verbose=False):
         """ Print all the data members based on the verbosity input"""
+        print("----------------------------")
         if _verbose : print("x : \n",self.x)
         if _verbose : print("y : \n",self.y)
-        print("number of input nodes  : ",self.n_inodes)
-        print("number of hidden nodes : ",self.n_hnodes)
-        print("number of output nodes : ",self.n_onodes)
-        print("number of hidden  layers : ",self.n_hlayers)
+        print("INF : Number of input nodes    : ",self.n_inodes)
+        print("INF : Number of hidden nodes   : ",self.n_hnodes)
+        print("INF : Number of output nodes   : ",self.n_onodes)
+        print("INF : Number of hidden  layers : ",self.n_hlayers)
+        print("----------------------------")
 
-    def create_layers(self):
+    def create_layers(self,_verbose=False):
         """ Create all the necessary layers """
+        print("----------------------------")
         for i in range(self.n_hlayers):
             if i == 0:
                 # Add first hidden layer
                 print("INF : Creating first hidden layer...")
                 self.layers = np.append(self.layers,Layer(self.n_hnodes,self.n_inodes))
                 self.layers[-1].init_matrices()
-                print(self.layers[-1].w)
+                if _verbose : print(self.layers[-1].w)
                 continue
             else:
                 # Add all else hidden layers
                 print("INF : Creating internal hidden layer...")
                 self.layers = np.append(self.layers,Layer(self.n_hnodes,self.layers[-1].w.shape[0]))
                 self.layers[-1].init_matrices()
-                print(self.layers[-1].w)
+                if _verbose : print(self.layers[-1].w)
                 continue
         # Add last output layer
         print("INF : Creating output layer...")
         self.layers = np.append(self.layers,Layer(self.n_onodes,self.layers[-1].w.shape[0]))
         self.layers[-1].init_matrices()
-        print(self.layers[-1].w)
-        print(self.layers)
+        if _verbose : print(self.layers[-1].w)
+        if _verbose : print(self.layers)
+        print("----------------------------")
 
     def train(self,_epochs = 1,_echo = False):
         """ Train the neural network """
+        print("----------------------------")
+        print("INF : Starting Training...")
+        print("INF : TOTAL EPOCHS = ",_epochs)
         for epoch in xrange(_epochs):  # iterate through epochs
             for case in xrange(self.x.shape[1]): # iterate through all the cases
                 if _echo:print("DBG : Performing one forward propagation loop...")
                 self.forward_propagation(case)
                 if _echo:print("DBG : Performing one back propagation loop...")
                 self.back_propagation(case)
+        print("INF : Finished Training...")
+        print("----------------------------")
 
     def forward_propagation(self,_case,_verbose = False):
         """ Perform neural network forward propagation operation"""
@@ -240,7 +255,7 @@ class NeuralNetwork:
 
     def back_propagation(self,_case):
         """ Perform  neural network back propagation operation """
-        learning_rate = 0.001
+        learning_rate = 0.0001
         y = self.y[:,_case]
         L = len(self.layers) -1
         for j in xrange(len(self.layers)-1,-1,-1): # Iterate back through layers
@@ -271,6 +286,7 @@ class NeuralNetwork:
         @param _x : input np.matrix with separate test cases in unique columns
         """
         guess = np.array([])
+        _x = _x / float(self.xmax)
         for case in xrange(_x.shape[1]): # iterate through all input cases
             a = np.matrix(_x[:,case])    # activation of previous layer
             for j in xrange(len(self.layers)): # iterate through layers
@@ -281,7 +297,7 @@ class NeuralNetwork:
 
 
 
-    def calc_error(self,_x,_y,_xmax=1,_ymax=1,_echo=True):
+    def calc_error(self,_x,_y,_echo=True):
         """ Calculate the error of the neural network
         @param _x : input np.matrix with separate test cases in unique columns
         @param _y : output target with separate test cases in unique columns
@@ -290,20 +306,11 @@ class NeuralNetwork:
             print("ERR : Error can not be calculated...")
             print("ERR : _x and _y should have same number of cases...")
             assert(False)
-        if(_xmax == 1):
-            xmax = np.max(_x)
-        else:
-            xmax = _xmax
-        _x = _x / float(xmax)
-        if(_ymax == 1):
-            ymax = np.max(_y)
-        else:
-            ymax = _ymax
-        _y = _y / float(ymax)
         guess = self.guess(_x)
-        if _echo : print("DBG : guess  : ",guess*ymax)
-        if _echo : print("DBG : target : ",_y*ymax)
-        error = 1.0/float(_x.shape[1]) * np.sum(np.square((guess - _y )) )
+        if _echo : print("INF : Calculating squared mean error...")
+        if _echo : print("DBG : guess  : ",guess*self.ymax)
+        if _echo : print("DBG : target : ",_y)
+        error = 1.0/float(_x.shape[1]) * np.sum(np.square((guess*self.ymax-_y )) )
         if _echo : print("INF : TOTAL ERROR : ",error)
         return error
 
@@ -312,15 +319,17 @@ class NeuralNetwork:
 
 
 if __name__ == "__main__":
-    x = np.matrix([[7,5,2],[6,7,8]],dtype=float)
-    y = np.matrix([[99,60,35]],dtype=float)
+    # The inputs
+    # # 1st row : No. of hours studied
+    # # 2nd row : No. of hours slept
+    x = np.matrix( [ [7,5,3 ,6 ], [6,8,10,7]],dtype=float)
+    # The target for supervised learning
+    # # The marks achieved in exam
+    y = np.matrix([[99,60,35,80]],dtype=float)
 
-    print(x.shape)
-    print(y.shape)
-    nn = NeuralNetwork(x,y,8,_ymax=100,_nhlayers=2)
-    nn.print_all(_verbose=True)
+    nn = NeuralNetwork(x,y,20,_ymax=100,_nhlayers=2)
+    nn.print_info()
     nn.create_layers()
-    nn.calc_error(x,y,_ymax = 100)
-    nn.train(_epochs=10000)
     nn.calc_error(x,y)
-    # IS IT CORRECT TO SCALE THE DATA DOWN ?
+    nn.train(_epochs=20000)
+    nn.calc_error(x,y)

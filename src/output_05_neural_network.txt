@@ -1,0 +1,24 @@
+----------------------------
+INF : Number of input nodes    :  2
+INF : Number of hidden nodes   :  20
+INF : Number of output nodes   :  1
+INF : Number of hidden  layers :  2
+----------------------------
+----------------------------
+INF : Creating first hidden layer...
+INF : Creating internal hidden layer...
+INF : Creating output layer...
+----------------------------
+INF : Calculating squared mean error...
+DBG : guess  :  [11982.65294802 12079.22559588 12175.79824374 12030.93927195]
+DBG : target :  [[99. 60. 35. 80.]]
+INF : TOTAL ERROR :  143976730.69767952
+----------------------------
+INF : Starting Training...
+INF : TOTAL EPOCHS =  20000
+INF : Finished Training...
+----------------------------
+INF : Calculating squared mean error...
+DBG : guess  :  [92.55549754 64.67976197 36.8040264  78.61762976]
+DBG : target :  [[99. 60. 35. 80.]]
+INF : TOTAL ERROR :  17.14931069160277
