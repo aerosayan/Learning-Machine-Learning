@@ -1,7 +1,7 @@
 # Learning Machine Learning (the hard way)
 <i>Pun fully intended. #NO_REGRETS  </i></br>
 </br>
-![insanity-wolf](memes/insanity-wolf.jpg)
+![courage-wolf](memes/courage-wolf.jpg)
 </br></br>
 
 I have previously created and used Artificial Neural Networks(ANN) with the help
