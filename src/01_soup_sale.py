@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 n = 100                                                   # no. of data points
 temp = np.linspace(3, 30, n)                              # temperature (deg C)
-noise = np.random.randint(-5,7,size = n)                 # noise to simulate RL
+noise = np.random.randint(-5,7,size = n)                  # noise to simulate RL
 soup = np.linspace(40, 22 , n, dtype = 'int') + noise     # soup sale count
 
 # We are re-assigning the data since we like to write in this form

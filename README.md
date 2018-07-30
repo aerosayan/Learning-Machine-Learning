@@ -1,7 +1,8 @@
 # Learning Machine Learning (the hard way)
 <i>Pun fully intended. #NO_REGRETS  </i></br>
 </br>
-![courage-wolf](memes/courage-wolf.jpg)
+![courage-wolf](memes/courage-wolf.jpg) </br>
+### Courage wolf here to give courage for the journey ahead.
 </br></br>
 
 I have previously created and used Artificial Neural Networks(ANN) with the help
@@ -20,6 +21,13 @@ they are trying to solve.</br>
 ![programmers](memes/programmers.png)
 
 Enough said. Let's get coding.
+
+We will need a mascot.</br>
+A mascot to build a better community, and be a symbol of professionalism and friendship.
+I present to you ladies and gentlemen , "Zengu" the baby zen penguin.</br>
+She is smart, talented, loves introducing people to ML and wants to win a Nobel prize.
+![zengu](memes/i-made-dis-zengu.png) </br>
+
 
 
 
